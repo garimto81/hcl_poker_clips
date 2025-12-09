@@ -1,0 +1,5 @@
+# 수동으로 추가할 HCL Poker Clips 동영상 URL 목록
+# 각 줄에 하나의 URL을 입력하세요
+
+# HCL Poker Clips 채널 최근 동영상 URL (샘플)
+https://www.youtube.com/watch?v=CfBKD-ABD_s

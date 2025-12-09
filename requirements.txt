@@ -1,0 +1,15 @@
+# YouTube 동영상 다운로드를 위한 라이브러리
+yt-dlp>=2023.10.13
+youtube-search-python>=1.4.9
+youtube-transcript-api>=0.6.2
+
+# HTTP 요청 및 회피 전략을 위한 라이브러리
+requests>=2.31.0
+fake-useragent>=1.4.0
+urllib3>=2.0.0
+
+# 비디오 처리 라이브러리
+ffmpeg-python>=0.2.0
+
+# 비동기 처리 (추후 확장을 위한)
+aiohttp>=3.9.0
