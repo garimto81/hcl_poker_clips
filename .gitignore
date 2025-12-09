@@ -231,3 +231,8 @@ certs/
 # Downloads
 downloads/
 videos/
+
+# Sensitive files
+cookies.txt
+manual_urls.txt
+*.txt
