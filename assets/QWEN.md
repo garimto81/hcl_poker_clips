@@ -87,7 +87,7 @@ HCL Poker Clips 자동 다운로드 앱은 YouTube 채널 "https://www.youtube.c
 ### 3. 회피 전략
 - **시그니처 난독화 대응**: 실시간 시그니처 추출 알고리즘 업데이트, 다중 추출 방법 구현
 - **속도 제한 회피**: 지능형 요청 조절 및 무작위 지연, 다중 프록시 회전
-- **CAPTCHA 처리**: CAPTCHA 해결 서비스 통합, 챌린지 해결을 위한 브라우저 자동화
+- **CAPTCHA 처리**: CAPTCHA 해결 서비스 통합, 챔린지 해결을 위한 브라우저 자동화
 - **적응형 기법**: 차단 지표의 지속적 모니터링, 대체 방법 자동 전환
 
 ## 파일 구조
@@ -96,12 +96,106 @@ HCL Poker Clips 자동 다운로드 앱은 YouTube 채널 "https://www.youtube.c
 C:\claude\HCL_Poker_Clips\
 ├── Architecture_Design.md       # 시스템 아키텍처 설계서
 ├── Evasion_Strategy.md          # 회피 전략 설계서
+├── FINAL_REPORT.md
+├── get_channel_info.py
+├── LICENSE
+├── MANUAL_URL_GUIDE.md
 ├── Product_Requirements_Document.md # 제품 요구사항 문서
+├── PROJECT_SUMMARY.md
+├── QWEN.md
 ├── README.md                   # 프로젝트 개요
+├── run_downloader.py
+├── test_downloader.py
+├── .git\...
 ├── docs/
 │   └── block_agent_system.md   # 블록-에이전트 시스템 아키텍처 문서
-└── ...                         # 기타 파일
+├── downloads/
+└── src/
+    ├── config/
+    │   └── config.py           # 설정 관리 모듈
+    ├── download/
+    │   └── main.py             # 메인 다운로드 로직
+    ├── gui/
+    │   ├── gui_app.py          # Tkinter GUI 애플리케이션
+    │   └── web_server.py       # Flask 웹 서버
+    └── utils/
+        └── youtube_utils.py    # YouTube API 및 유틸리티 함수
 ```
+
+## 주요 모듈 설명
+
+### 1. src/config/config.py
+- 애플리케이션의 모든 설정 값을 관리
+- 환경변수와 config.ini 파일을 기반으로 설정을 로드
+- yt-dlp 다운로드 옵션 및 회피 전략 설정 포함
+
+### 2. src/download/main.py
+- 주요 다운로드 로직을 포함하는 메인 모듈
+- HCLPokerClipsDownloader 클래스는 채널에서 동영상 목록을 가져오고 다운로드를 수행
+- 재시도 로직 및 회피 전략 적용 포함
+
+### 3. src/utils/youtube_utils.py
+- YouTube 채널에서 동영상 URL을 추출하는 유틸리티 함수들
+- RSS 피드와 yt-dlp를 사용하여 동영상 목록을 가져오는 다양한 방법 구현
+- 동영상 정보 추출 및 유효성 검사 기능 포함
+
+### 4. src/gui/web_server.py
+- Flask 기반의 웹 인터페이스 제공
+- 사용자가 UI를 통해 다운로드 작업을 시작할 수 있음
+
+### 5. src/gui/gui_app.py
+- Tkinter 기반의 데스크톱 GUI 애플리케이션
+- URL 입력 및 다운로드 진행 상태 표시
+
+## 주요 설정 옵션
+
+| 설정 | 설명 | 기본값 |
+|------|------|--------|
+| DOWNLOAD_DIR | 다운로드 파일 저장 위치 | downloads |
+| MAX_RETRIES | 다운로드 실패 시 재시도 횟수 | 3 |
+| YTDLP_FORMAT | 다운로드 화질 설정 | best[height<=1080] |
+| REQUEST_DELAY_MIN | 요청 최소 대기 시간 (초) | 1.0 |
+| REQUEST_DELAY_MAX | 요청 최대 대기 시간 (초) | 3.0 |
+| MAX_DELAY_SECONDS | 재시도 시 최대 대기 시간 (초) | 15.0 |
+| LOG_LEVEL | 로그 레벨 | INFO |
+
+## 실행 방법
+
+### 1. 의존성 설치
+```bash
+pip install -r requirements.txt
+```
+
+### 2. 애플리케이션 실행
+```bash
+python run_downloader.py
+```
+
+### 3. 웹 인터페이스 실행
+```bash
+python -m src.gui.web_server
+```
+
+### 4. GUI 애플리케이션 실행
+```bash
+python -m src.gui.gui_app
+```
+
+## 회피 전략 상세
+
+### 요청 간격 조절
+- 다운로드 요청 사이에 무작위 지연을 적용
+- 설정 파일의 REQUEST_DELAY_MIN과 REQUEST_DELAY_MAX 값에 따라 지연
+
+### 사용자 에이전트 무작위 변경
+- fake-useragent 라이브러리를 사용하여 요청 시 랜덤한 사용자 에이전트 적용
+
+### 쿠키 기반 접근
+- YouTube 로그인 상태를 유지하기 위한 쿠키 파일 사용 가능
+- cookies.txt 파일을 프로젝트 루트에 배치하면 자동으로 사용
+
+### 수동 URL 추가
+- 자동 채널 분석이 실패한 경우, manual_urls.txt 파일을 통해 수동으로 URL 지정 가능
 
 ## 개발 규칙
 
@@ -146,3 +240,8 @@ C:\claude\HCL_Poker_Clips\
 - API 속도 제한 (Rate Limiting)
 - CORS 설정 관리
 - 네트워크 통신은 HTTPS/TLS 암호화 사용
+
+## 테스트
+
+- 테스트 스크립트: `python test_downloader.py`
+- YouTube 유틸리티, 설정 모듈, 다운로더 클래스의 기본 기능 테스트

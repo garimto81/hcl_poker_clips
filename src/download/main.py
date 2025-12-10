@@ -75,19 +75,18 @@ class HCLPokerClipsDownloader:
         # yt-dlp 옵션 설정
         ydl_opts = self.config.get_ytdlp_options()
 
-        # 추가 회피 전략 적용
-        ydl_opts.update({
+        # 추가 회피 전략 적용 - 기존 설정을 덮어쓰지 않도록 주의
+        additional_opts = {
             'extractor_args': {
                 'youtube': {
                     'skip': ['authcheck'],
                     'player_skip': ['js', 'configs', 'webpage'],
                 }
             },
-            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
             'headers': {
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Accept-Encoding': 'gzip, deflate',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Accept-Encoding': 'gzip, deflate, br',
                 'Connection': 'keep-alive',
                 'Referer': 'https://www.youtube.com/',
                 'Origin': 'https://www.youtube.com',
@@ -96,7 +95,16 @@ class HCLPokerClipsDownloader:
                 'Sec-Fetch-Site': 'same-origin',
             },
             'force_ipv4': True,  # IPv4만 사용
-        })
+        }
+
+        # ydl_opts에 additional_opts를 업데이트하되, 기존 설정을 유지
+        for key, value in additional_opts.items():
+            if isinstance(value, dict) and key in ydl_opts and isinstance(ydl_opts[key], dict):
+                # 중첩된 딕셔너리의 경우, 병합
+                ydl_opts[key].update(value)
+            else:
+                # 단순한 값의 경우, 덮어씀
+                ydl_opts[key] = value
 
         try:
             # 회피 전략 적용: 사용자 에이전트 무작위 설정 등
@@ -132,8 +140,8 @@ class HCLPokerClipsDownloader:
 
                     # 재시도 시 추가 회피 전략 적용
                     retry_opts = ydl_opts.copy()
-                    retry_opts['user_agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36'
-                    retry_opts['sleep_interval'] = 3  # 재시도 시 더 긴 지연 시간
+                    retry_opts['user_agent'] = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
+                    retry_opts['sleep_interval'] = 5  # 재시도 시 더 긴 지연 시간
 
                     with yt_dlp.YoutubeDL(retry_opts) as ydl:
                         info = ydl.extract_info(video_url, download=True)
