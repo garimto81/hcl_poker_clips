@@ -13,3 +13,10 @@ ffmpeg-python>=0.2.0
 
 # 비동기 처리 (추후 확장을 위한)
 aiohttp>=3.9.0
+
+# Google Sheets API (NAS-Sheets 동기화)
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+
+# 유사도 매칭 (빠른 fuzzy string matching)
+rapidfuzz>=3.0.0
